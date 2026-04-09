@@ -2,9 +2,13 @@ import { ethers } from "ethers"
 import { getCommodityPrices, toOnChainPrice } from "../services/commoditiesApi"
 import PriceOracleABI from "../abi/PriceOracle.json"
 
-const provider = new ethers.JsonRpcProvider(process.env.RPC_URL!)
-const signer   = new ethers.Wallet(process.env.PRIVATE_KEY!, provider)
-const oracle   = new ethers.Contract(process.env.PRICE_ORACLE_ADDRESS!, PriceOracleABI as any, signer)
+if (!process.env.RPC_URL || !process.env.PRIVATE_KEY || !process.env.PRICE_ORACLE_ADDRESS) {
+  throw new Error("Missing required env vars: RPC_URL, PRIVATE_KEY, PRICE_ORACLE_ADDRESS")
+}
+
+const provider = new ethers.JsonRpcProvider(process.env.RPC_URL)
+const signer   = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
+const oracle   = new ethers.Contract(process.env.PRICE_ORACLE_ADDRESS, PriceOracleABI, signer)
 
 const SYMBOLS = ["RICE", "COFFEE", "CORN", "CPO"]
 
